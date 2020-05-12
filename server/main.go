@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 // starts a grpc server and waits for connection
@@ -20,8 +21,17 @@ func main() {
 	// creating a server instance
 	s := api.Server{}
 
+	// craete TSL credentials
+	creds, err := credentials.NewServerTLSFromFile("cert/server.crt", "cert/server.key")
+	if err != nil {
+		log.Fatalf("could not load TLS keys: %s", err)
+	}
+
+	// Create an array of gRPC options with the credentials
+	opts := []grpc.ServerOption{grpc.Creds(creds)}
+
 	// creating a grpc object
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(opts...)
 
 	// attach the ping service to the server
 	api.RegisterPingServer(grpcServer, &s)
@@ -30,4 +40,3 @@ func main() {
 		log.Fatalf("failed to serve: %s", err)
 	}
 }
-
