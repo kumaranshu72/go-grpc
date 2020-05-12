@@ -9,6 +9,25 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+// Authenticate
+type Authentication struct {
+	Login string
+	Password string
+}
+
+// GetRequestMetadata gets request metadata
+func (a *Authentication) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
+	return map[string]string{
+		"login": a.Login,
+		"password": a.Password,
+	}, nil
+}
+
+// RequireTransportSecurity indicates whether the credentials requires transport security
+func (a *Authentication) RequireTransportSecurity() bool {
+	return true
+}
+
 // main function to create client call
 func main() {
 	var conn *grpc.ClientConn
@@ -18,7 +37,13 @@ func main() {
 		log.Fatalf("could not load tls cert: %s", err)
 	}
 
-	conn, err = grpc.Dial(":7777", grpc.WithTransportCredentials(creds))
+	// setup authentication
+	auth := Authentication{
+		Login: "anshu",
+		Password: "anshu",
+	}
+
+	conn, err = grpc.Dial(":7777", grpc.WithTransportCredentials(creds), grpc.WithPerRPCCredentials(&auth))
 	if err != nil {
 		log.Fatalf("did not connect: %s", err)
 	}
