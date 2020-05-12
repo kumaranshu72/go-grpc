@@ -26,10 +26,10 @@ func authenticateClient(ctx context.Context, s *api.Server) (string, error) {
 		clientLogin := strings.Join(md["login"], "")
 		clientPassword := strings.Join(md["password"], "")
 
-		if clientLogin != "john" {
+		if clientLogin != "anshu" {
 			return "", fmt.Errorf("unknown user %s", clientLogin)
 		}
-		if clientPassword != "doe" {
+		if clientPassword != "anshu" {
 			return "", fmt.Errorf("bad password %s", clientPassword)
 		}
 		log.Printf("authenticated client: %s", clientLogin)
@@ -49,7 +49,7 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	if err != nil {
 		return nil, err
 	}
-	ctx = context.WithValue(ctx, clientIdKey, clientId)
+	ctx = context.WithValue(ctx, clientIdKey, clientID)
 	return handler(ctx, req)
 }
 
