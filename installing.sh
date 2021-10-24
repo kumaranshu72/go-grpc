@@ -1,6 +1,8 @@
 // installing proto complier
 brew install protobuf
 
+ls
+
 // compling ptoyobuf
 protoc -I api/ -I ${GOPATH}/src \
    --go_out=plugins=grpc:api \
